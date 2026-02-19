@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { postQueryOptions } from '../../api/posts'
+import { type Post, postQueryOptions } from '../../api/posts'
 
 export const Route = createFileRoute('/blogs/$postId')({
     loader: ({ context, params: { postId } }) =>
@@ -10,7 +10,7 @@ export const Route = createFileRoute('/blogs/$postId')({
 
 function BlogDetail() {
     const { postId } = Route.useParams()
-    const { data: post, isPending } = useQuery(postQueryOptions(postId))
+    const { data: post, isPending } = useQuery<Post>(postQueryOptions(postId))
 
     if (isPending) return <div className="text-center p-20 text-white">Loading post...</div>
     if (!post) return <div className="text-center p-20 text-red-400">Post not found</div>
@@ -65,8 +65,8 @@ function BlogDetail() {
 
             <div className="max-w-2xl mx-auto">
                 <div className="prose prose-lg md:prose-xl prose-slate !max-w-none">
-                    {post.content.split('\n').map((para, i) => (
-                        <p key={i} className="text-gray-700 leading-relaxed mb-6 font-medium text-lg opacity-90">
+                    {post.content.split('\n').filter(Boolean).map((para) => (
+                        <p key={para} className="text-gray-700 leading-relaxed mb-6 font-medium text-lg opacity-90">
                             {para}
                         </p>
                     ))}
